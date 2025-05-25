@@ -23,22 +23,17 @@ export class HomeComponent {
   constructor(public router: Router){
 
   }
-  hardwareApp(){
+InventoryManagement(){
 
-    this.router.navigateByUrl('/hardware');
+    this.router.navigateByUrl('/Inventory-Management');
 
   }
-  sideEffectsApp(){
-    this.router.navigateByUrl('/sideeffects');
+ AIAssitant(){
+    this.router.navigateByUrl('/AIAssistant');
   }
 
-  qiblaFinderApp(){
-    this.router.navigateByUrl('/qiblafinder');
+  WastePrevention(){
+    this.router.navigateByUrl('/waste-prevention');
   }
-  trackerApp(){
-    this.router.navigateByUrl('/tracker');
-  }
-  trackerDEVApp(){
-    this.router.navigateByUrl('/trackerdev');
-  }
+
 }

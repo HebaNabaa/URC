@@ -1,16 +1,12 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home.component';
-import { HardwareComponent } from './features/hardware/hardware.component';
-import { SideeffectsComponent } from './features/sideeffects/sideeffects.component';
-import { QiblafinderComponent } from './features/qiblafinder/qiblafinder.component';
-import { TrackerComponent } from './features/tracker/tracker.component';
-import { TrackerdevComponent } from './features/trackerdev/trackerdev.component';
+import { AIAssistantComponent } from './features/AIAssistant/aiassistant.component';
+import { InventoryManagementComponent } from './features/Inventory-Management/inventory-management.component';
+import { WastePreventionComponent } from './features/waste-prevention/waste-prevention.component';
+
 export const routes: Routes = [
     {path:'', component:HomeComponent},
-    {path:'hardware', component:HardwareComponent},
-    {path:'sideeffects', component:SideeffectsComponent},    
-    {path:'qiblafinder',component:QiblafinderComponent},
-    {path:'tracker',component:TrackerComponent},
-    {path:'trackerdev',component:TrackerdevComponent}
- 
+    {path: "AIAssistant", component: AIAssistantComponent },
+    {path:'Inventory-Management', component:InventoryManagementComponent  },    
+    {path:'waste-prevention',component:WastePreventionComponent},
 ];
