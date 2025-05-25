@@ -1,0 +1,27 @@
+<m-container>
+<div class="container">
+  <h2>Smart Fridge - Waste Prevention</h2>
+
+  <label for="imageUrl">Enter Image URL: </label>
+  <input
+    id="imageUrl"
+    type="text"
+    [(ngModel)]="imageUrl"
+    placeholder="Paste image URL here"
+  />
+  <button (click)="analyzeImage()">Analyze Image</button>
+
+  <div *ngIf="imageUrl">
+    <h3>Image Preview:</h3>
+    <img [src]="imageUrl" alt="Input Image" width="300" />
+  </div>
+
+  <div *ngIf="detectedItems.length > 0">
+    <h3>Detected Items:</h3>
+    <ul>
+      <li *ngFor="let item of detectedItems">{{ item }}</li>
+    </ul>
+  </div>
+</div>
+
+</m-container>
