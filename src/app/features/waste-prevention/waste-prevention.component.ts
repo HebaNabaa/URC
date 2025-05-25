@@ -28,6 +28,7 @@ const firebaseConfig = {
 export class WastePreventionComponent {
   imageUrl: string = '';
   detectedItems: string[] = [];
+  expiryWarnings: string[] = [];  // <-- Add this to hold warnings
   db: any;
 
   constructor(private http: HttpClient) {
@@ -108,13 +109,18 @@ export class WastePreventionComponent {
     await set(ref(this.db, dbPath), data);
     console.log('Data saved to Firebase:', data);
 
-    // Check for expired or near-expired items
+    // Clear previous warnings before adding new ones
+    this.expiryWarnings = [];
+
+    // Check for expired or near-expired items, prepare warnings for UI
     const today = new Date();
     for (const item of detectedWithExpiry) {
       const expiry = new Date(item.expiryDate);
       const diffDays = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
       if (diffDays <= 2) {
-        console.warn(`⚠️ ${item.name} will expire in ${diffDays} day(s)!`);
+        const warningMessage = `⚠️ ${item.name} will expire in ${diffDays} day(s)!`;
+        this.expiryWarnings.push(warningMessage);
+        console.warn(warningMessage);
       }
     }
   }

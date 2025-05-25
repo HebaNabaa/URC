@@ -1,27 +1,26 @@
 <m-container>
-<div class="container">
-  <h2>Smart Fridge - Waste Prevention</h2>
+  <h2>Waste Prevention</h2>
 
-  <label for="imageUrl">Enter Image URL: </label>
+  <label for="imageUrlInput">Enter Image URL:</label>
   <input
-    id="imageUrl"
     type="text"
+    id="imageUrlInput"
     [(ngModel)]="imageUrl"
     placeholder="Paste image URL here"
   />
   <button (click)="analyzeImage()">Analyze Image</button>
 
-  <div *ngIf="imageUrl">
-    <h3>Image Preview:</h3>
-    <img [src]="imageUrl" alt="Input Image" width="300" />
-  </div>
-
-  <div *ngIf="detectedItems.length > 0">
+  <div *ngIf="detectedItems.length > 0" class="results">
     <h3>Detected Items:</h3>
     <ul>
       <li *ngFor="let item of detectedItems">{{ item }}</li>
     </ul>
   </div>
-</div>
 
+  <div *ngIf="expiryWarnings.length > 0" class="warnings" style="color: red; margin-top: 20px;">
+    <h3>Expiry Warnings:</h3>
+    <ul>
+      <li *ngFor="let warning of expiryWarnings">{{ warning }}</li>
+    </ul>
+  </div>
 </m-container>
