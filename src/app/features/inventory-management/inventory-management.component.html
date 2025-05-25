@@ -1,1 +1,17 @@
-<p>inventory-management works!</p>
+<m-container>
+  <br><br> <br><br>
+    <h1> Smart Fridge Inventory </h1>
+    <br><br>
+    <button class="pure-button" (click)="detectItems()">Detect Food Items</button>
+    
+    <div *ngIf="loading" class="loading">Detecting items...</div>
+
+    <ul *ngIf="detectedItems.length">
+      <li *ngFor="let item of detectedItems">
+        {{ item.class }} - Quantity: {{ item.quantity }}
+      </li>
+    </ul>
+
+    <div *ngIf="!loading && detectedItems.length === 0">No items detected yet.</div>
+  
+</m-container>

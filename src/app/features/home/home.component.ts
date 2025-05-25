@@ -1,11 +1,4 @@
 
-// Run the app
-// Add another light sensor to be shown on a different canvasjs chart
-// Modify your implementation to be shown on the same canvasjs chart (one chart, two lines)
-// Modify your implementation to show three lines on the same chart. Light1, light2, their average
-// Add a slider to control a LED's intesity. 
-
-
 import { Component } from '@angular/core';
 import { MContainerComponent } from '../../m-framework/components/m-container/m-container.component';
 import { CommonModule } from '@angular/common';
@@ -25,7 +18,7 @@ export class HomeComponent {
   }
 InventoryManagement(){
 
-    this.router.navigateByUrl('/Inventory-Management');
+    this.router.navigateByUrl('/inventory-management');
 
   }
  AIAssitant(){

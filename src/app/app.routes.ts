@@ -7,6 +7,6 @@ import { WastePreventionComponent } from './features/waste-prevention/waste-prev
 export const routes: Routes = [
     {path:'', component:HomeComponent},
     {path: "AIAssistant", component: AIAssistantComponent },
-    {path:'Inventory-Management', component:InventoryManagementComponent  },    
+    {path:'inventory-management', component:InventoryManagementComponent  },    
     {path:'waste-prevention',component:WastePreventionComponent},
 ];
