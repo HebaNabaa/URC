@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TrackerComponent } from './tracker.component';
+import { WastePreventionComponent } from './waste-prevention.component';
 
-describe('TrackerComponent', () => {
-  let component: TrackerComponent;
-  let fixture: ComponentFixture<TrackerComponent>;
+describe('WastePreventionComponent', () => {
+  let component: WastePreventionComponent;
+  let fixture: ComponentFixture<WastePreventionComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TrackerComponent]
+      imports: [WastePreventionComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(TrackerComponent);
+    fixture = TestBed.createComponent(WastePreventionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
