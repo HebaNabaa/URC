@@ -12,42 +12,71 @@ import { CommonModule } from '@angular/common';
   styleUrl: './inventory-management.component.css'
 })
 
-export class InventoryManagementComponent  {
+export class InventoryManagementComponent {
   detectedItems: { class: string; quantity: number }[] = [];
   loading = false;
 
-  private readonly apiKey = 'YOUR_API_KEY'; // Replace with your actual ML API key 
-  private readonly detectionEndpoint = 'https://your-ml-api-endpoint.com/detect'; //URL of the ML server
+  previewUrl: string | ArrayBuffer | null = null;
+  selectedFile: File | null = null;
+
+  private readonly apiKey = 'kOMqAVhkOoiAg4BbctHK';
+  private readonly modelId = 'smart-fridge-mvi88/smart-fridge-co7ul-instant-3';
+  private readonly detectionEndpoint = `https://detect.roboflow.com/${this.modelId}?api_key=${this.apiKey}`;
 
   constructor(private http: HttpClient) {}
 
-  detectItems() {
-    this.loading = true;
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.apiKey}`,
-      'Content-Type': 'application/json'
-    });
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.selectedFile = input.files[0];
 
-    const payload = {
-      image_url: 'https://example.com/fridge_image.jpg' // Replace with actual image data or URL
-    };
-
-    this.http.post<any>(this.detectionEndpoint, payload, { headers }).subscribe({
-      next: response => {
-        this.detectedItems = this.aggregateItems(response.items || []);
-        this.loading = false;
-      },
-      error: err => {
-        console.error('Detection failed', err);
-        this.loading = false;
-      }
-    });
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
 
-  aggregateItems(items: any[]) {
+  detectItems() {
+    if (!this.selectedFile) {
+      alert("Please select an image first.");
+      return;
+    }
+
+    this.loading = true;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Image = (reader.result as string).split(',')[1]; 
+
+      const payload = {
+        image: base64Image
+      };
+
+      this.http.post<any>(this.detectionEndpoint, payload, {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      }).subscribe({
+        next: response => {
+          this.detectedItems = this.aggregateItems(response.predictions || []);
+          this.loading = false;
+          console.log('Roboflow response:', response);
+        },
+        error: err => {
+          console.error('Detection failed', err);
+          this.loading = false;
+
+        }
+      });
+    };
+
+    reader.readAsDataURL(this.selectedFile);
+  }
+
+  aggregateItems(predictions: any[]) {
     const itemMap: { [key: string]: number } = {};
-    for (const item of items) {
-      const name = item.class.toLowerCase();
+    for (const pred of predictions) {
+      const name = pred.class.toLowerCase();
       itemMap[name] = (itemMap[name] || 0) + 1;
     }
     return Object.entries(itemMap).map(([key, value]) => ({ class: key, quantity: value }));
