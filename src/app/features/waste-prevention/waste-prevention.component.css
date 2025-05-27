@@ -1,0 +1,45 @@
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 1rem;
+}
+ 
+.form-group {
+  margin-bottom: 1rem;
+}
+ 
+input[type="text"] {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+ 
+.analyze-button {
+  padding: 0.6rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+ 
+.analyze-button:hover {
+  background-color: #0056b3;
+}
+ 
+.image-preview img {
+  max-width: 100%;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+}
+ 
+.detected-items,
+.expiry-warnings {
+  margin-top: 1.5rem;
+}
+ 
+ul {
+  padding-left: 1.2rem;
+}
+ 
+ 

@@ -28,7 +28,7 @@ const firebaseConfig = {
 export class WastePreventionComponent {
   imageUrl: string = '';
   detectedItems: string[] = [];
-  expiryWarnings: string[] = [];  // <-- Add this to hold warnings
+  expiryWarnings: string[] = [];
   db: any;
 
   constructor(private http: HttpClient) {
@@ -42,27 +42,65 @@ export class WastePreventionComponent {
       return;
     }
 
-    const roboflowKey = 'YOUR_ROBOFLOW_API_KEY';
-    const project = 'YOUR_PROJECT_NAME';
-    const modelVersion = 'YOUR_MODEL_VERSION';
+    const roboflowKey = 'kOMqAVhkOoiAg4BbctHK';
+    const project = 'smart-fridge-mvi88';
+    const modelVersion = 'smart-fridge-co7ul-instant-3';
 
-    this.http.post(
-      `https://detect.roboflow.com/${project}/${modelVersion}?api_key=${roboflowKey}`,
-      { image: this.imageUrl }
-    ).subscribe({
-      next: async (response: any) => {
-        const predictions = response?.predictions || [];
-        this.detectedItems = predictions.map((p: any) => p.class);
+    const apiUrl = `https://detect.roboflow.com/${project}/${modelVersion}?api_key=${roboflowKey}`;
 
-        try {
-          await this.saveDataToFirebase();
-        } catch (error) {
-          console.error('Error saving data to Firebase:', error);
+    this.convertImageToBase64(this.imageUrl)
+      .then(base64Image => {
+        this.http.post(apiUrl, {
+          image: base64Image
+        }).subscribe({
+          next: async (response: any) => {
+            const predictions = response?.predictions || [];
+            this.detectedItems = predictions.map((p: any) => p.class);
+
+            try {
+              await this.saveDataToFirebase();
+            } catch (error) {
+              console.error('Error saving data to Firebase:', error);
+            }
+          },
+          error: (error) => {
+            console.error('Error detecting items:', error);
+            alert('Roboflow API error. Check your console for details.');
+          }
+        });
+      })
+      .catch(error => {
+        console.error('Image conversion error:', error);
+        alert('Failed to load or convert the image. Ensure the URL points directly to a JPG/PNG image.');
+      });
+  }
+
+  convertImageToBase64(imageUrl: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = imageUrl;
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject('Canvas context not available.');
+          return;
         }
-      },
-      error: (error) => {
-        console.error('Error detecting items:', error);
-      }
+
+        ctx.drawImage(img, 0, 0);
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        const base64 = dataUrl.replace(/^data:image\/(png|jpeg);base64,/, '');
+        resolve(base64);
+      };
+
+      img.onerror = () => {
+        reject('Image failed to load. Make sure the URL links directly to an image.');
+      };
     });
   }
 
@@ -97,7 +135,7 @@ export class WastePreventionComponent {
       };
     });
 
-    const docId = now.toISOString().slice(0, 16).replace('T', '_').replace(':', '-'); // Format: YYYY-MM-DD_HH-MM
+    const docId = now.toISOString().slice(0, 16).replace('T', '_').replace(':', '-');
     const dbPath = `users/user123/images/${docId}`;
 
     const data = {
@@ -109,10 +147,8 @@ export class WastePreventionComponent {
     await set(ref(this.db, dbPath), data);
     console.log('Data saved to Firebase:', data);
 
-    // Clear previous warnings before adding new ones
     this.expiryWarnings = [];
 
-    // Check for expired or near-expired items, prepare warnings for UI
     const today = new Date();
     for (const item of detectedWithExpiry) {
       const expiry = new Date(item.expiryDate);
