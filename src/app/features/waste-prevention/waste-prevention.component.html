@@ -1,43 +1,40 @@
 <m-container>
-  <div class="container">
-    <br><br>
-    <h2>🧊 Smart Fridge - Waste Prevention</h2>
+  <div class="waste-prevention-container">
+    <h2>Smart Fridge - Waste Prevention</h2>
 
     <!-- Image URL Input -->
-    <div class="form-group">
+    <div class="input-section">
       <label for="imageUrl">Image URL:</label>
       <input
-        type="text"
         id="imageUrl"
+        type="text"
         [(ngModel)]="imageUrl"
-        placeholder="Enter image URL here..."
-        class="form-control"
+        placeholder="Enter direct image URL (JPG/PNG)"
       />
+      <button (click)="analyzeImage()">Analyze Image</button>
     </div>
 
-    <!-- Analyze Button -->
-    <button (click)="analyzeImage()" class="analyze-button">Analyze Image</button>
-
-    <!-- Display Selected Image -->
+    <!-- Image Preview -->
     <div class="image-preview" *ngIf="imageUrl">
-      <h4>Preview:</h4>
-      <img [src]="imageUrl" alt="Uploaded Image" />
+      <h4>Image Preview:</h4>
+      <img [src]="imageUrl" alt="Input Image" />
     </div>
 
-    <!-- Detected Items List -->
+    <!-- Detected Items -->
     <div class="detected-items" *ngIf="detectedItems.length > 0">
-      <h4>🧾 Detected Items:</h4>
+      <h4>Detected Items:</h4>
       <ul>
-        <li *ngFor="let item of detectedItems">✔️ {{ item }}</li>
+        <li *ngFor="let item of detectedItems">{{ item }}</li>
       </ul>
     </div>
 
     <!-- Expiry Warnings -->
     <div class="expiry-warnings" *ngIf="expiryWarnings.length > 0">
-      <h4>⚠️ Expiry Warnings:</h4>
-      <ul>
-        <li *ngFor="let warning of expiryWarnings">{{ warning }}</li>
-      </ul>
+      <h4>Expiry Warnings:</h4>
+      <div *ngFor="let warning of expiryWarnings" class="warning">
+        {{ warning }}
+      </div>
     </div>
   </div>
 </m-container>
+

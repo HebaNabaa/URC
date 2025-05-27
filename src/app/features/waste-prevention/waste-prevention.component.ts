@@ -36,73 +36,40 @@ export class WastePreventionComponent {
     this.db = getDatabase(app);
   }
 
-  analyzeImage() {
-    if (!this.imageUrl.trim()) {
-      alert('Please enter an image URL.');
-      return;
+ analyzeImage() {
+  if (!this.imageUrl.trim()) {
+    alert('Please enter an image URL.');
+    return;
+  }
+
+  const roboflowKey = 'kOMqAVhkOoiAg4BbctHK';
+  const project = 'smart-fridge-mvi88';
+  const modelVersion = 'smart-fridge-co7ul-instant-3';
+
+  // Encode image URL to safely add as query param
+  const encodedImageUrl = encodeURIComponent(this.imageUrl.trim());
+
+  // Construct GET URL with image param
+  const apiUrl = `https://detect.roboflow.com/${project}/${modelVersion}?api_key=${roboflowKey}&image=${encodedImageUrl}`;
+
+  this.http.get(apiUrl).subscribe({
+    next: async (response: any) => {
+      console.log('Roboflow API response:', response);
+      const predictions = response?.predictions || [];
+      this.detectedItems = predictions.map((p: any) => p.class);
+
+      try {
+        await this.saveDataToFirebase();
+      } catch (error) {
+        console.error('Error saving data to Firebase:', error);
+      }
+    },
+    error: (error) => {
+      console.error('Error detecting items:', error);
+      alert('Roboflow API error. Check your console for details.');
     }
-
-    const roboflowKey = 'kOMqAVhkOoiAg4BbctHK';
-    const project = 'smart-fridge-mvi88';
-    const modelVersion = 'smart-fridge-co7ul-instant-3';
-
-    const apiUrl = `https://detect.roboflow.com/${project}/${modelVersion}?api_key=${roboflowKey}`;
-
-    this.convertImageToBase64(this.imageUrl)
-      .then(base64Image => {
-        this.http.post(apiUrl, {
-          image: base64Image
-        }).subscribe({
-          next: async (response: any) => {
-            const predictions = response?.predictions || [];
-            this.detectedItems = predictions.map((p: any) => p.class);
-
-            try {
-              await this.saveDataToFirebase();
-            } catch (error) {
-              console.error('Error saving data to Firebase:', error);
-            }
-          },
-          error: (error) => {
-            console.error('Error detecting items:', error);
-            alert('Roboflow API error. Check your console for details.');
-          }
-        });
-      })
-      .catch(error => {
-        console.error('Image conversion error:', error);
-        alert('Failed to load or convert the image. Ensure the URL points directly to a JPG/PNG image.');
-      });
-  }
-
-  convertImageToBase64(imageUrl: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = imageUrl;
-
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject('Canvas context not available.');
-          return;
-        }
-
-        ctx.drawImage(img, 0, 0);
-        const dataUrl = canvas.toDataURL('image/jpeg');
-        const base64 = dataUrl.replace(/^data:image\/(png|jpeg);base64,/, '');
-        resolve(base64);
-      };
-
-      img.onerror = () => {
-        reject('Image failed to load. Make sure the URL links directly to an image.');
-      };
-    });
-  }
+  });
+}
 
   async saveDataToFirebase() {
     const now = new Date();
@@ -161,3 +128,4 @@ export class WastePreventionComponent {
     }
   }
 }
+
