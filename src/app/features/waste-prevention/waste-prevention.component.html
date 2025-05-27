@@ -1,40 +1,59 @@
 <m-container>
-  <div class="waste-prevention-container">
-    <h2>Smart Fridge - Waste Prevention</h2>
-
-    <!-- Image URL Input -->
-    <div class="input-section">
-      <label for="imageUrl">Image URL:</label>
-      <input
-        id="imageUrl"
-        type="text"
-        [(ngModel)]="imageUrl"
-        placeholder="Enter direct image URL (JPG/PNG)"
-      />
-      <button (click)="analyzeImage()">Analyze Image</button>
+  <div class="container">
+    <br><br>
+    <h1>⚠️ Expiration Alerts</h1>
+    <br>
+ 
+    <!-- Expired Items Table -->
+    <div *ngIf="expiredItems.length > 0">
+      <h2>Expired Items</h2>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of expiredItems">
+            <td>{{ item.name }}</td>
+            <td>Expired {{ item.daysExpired }} day(s) ago</td>
+          </tr>
+          <!-- Warning row -->
+          <tr>
+            <td colspan="2" class="warning-cell">
+              ⚠️ Be careful! The above items have expired and may be unsafe to consume.
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <!-- Image Preview -->
-    <div class="image-preview" *ngIf="imageUrl">
-      <h4>Image Preview:</h4>
-      <img [src]="imageUrl" alt="Input Image" />
-    </div>
-
-    <!-- Detected Items -->
-    <div class="detected-items" *ngIf="detectedItems.length > 0">
-      <h4>Detected Items:</h4>
-      <ul>
-        <li *ngFor="let item of detectedItems">{{ item }}</li>
-      </ul>
-    </div>
-
-    <!-- Expiry Warnings -->
-    <div class="expiry-warnings" *ngIf="expiryWarnings.length > 0">
-      <h4>Expiry Warnings:</h4>
-      <div *ngFor="let warning of expiryWarnings" class="warning">
-        {{ warning }}
-      </div>
+ 
+    <br>
+ 
+    <!-- Near Expiry Items Table -->
+    <div *ngIf="nearExpiryItems.length > 0">
+      <h2>Near Expiry Items</h2>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of nearExpiryItems">
+            <td>{{ item.name }}</td>
+            <td>Will expire in {{ item.daysRemaining }} day(s)</td>
+          </tr>
+          <!-- Caution row -->
+          <tr>
+            <td colspan="2" class="caution-cell">
+              ⚠️ Attention! These items are near expiry!
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </m-container>
-
